@@ -59,7 +59,7 @@
           <p>Build 2017 - "What's new in TypeScript?" May 2017, Anders Hejlsberg, Co-designer of the TypeScript, Microsoft</p>
         </section>
         <section>
-          <h2>In a lot of discussions...</h2>
+          <h2>I had a lot of discussions about TS...</h2>
           <div class="fragment">
             <blockquote>
               <p>&laquo;...I have to write so much more code...&raquo;</p>
@@ -75,15 +75,24 @@
               <p>&laquo;...it feels like writing Java...&raquo;</p>
             </blockquote>
           </div>
+          <aside class="notes">
+            In discussions with other developers about typescript, I often hear
+          </aside>
         </section>
         <section>
           <h2>Type Inference</h2>
-          <p>With Type Inference we can handle it much simpler</p>
+          <p>With <a href="https://www.typescriptlang.org/docs/handbook/type-inference.html">Type Inference</a> we can handle it much
+            simpler</p>
           <pre><code class="hljs" style="word-wrap: break-word;">let x = 3;</code></pre>
           <pre><code class="hljs" style="word-wrap: break-word;">function add(a: number, b: number) {
   return a + b;
 }
 </code></pre>
+          <aside class="notes">
+            As we know, it's not fully true, Type Inference mad that a lot simpler: by definition, by a functions return value, structuring
+            (object literal creation). But still it's a valid point that TS enforces you to do more work. That was also confirmed by Anders
+            Hejlsberg.
+          </aside>
         </section>
         <section>
           <h2>What makes it complicated?</h2>
@@ -96,6 +105,9 @@
             </p>
             <small>Anders Hejlsberg, Build 2017 - "What's new in TypeScript?"</small>
           </blockquote>
+          <aside class="notes">
+            So that's how he described it.
+          </aside>
         </section>
         <section>
           <h2>Super set of JavaScript</h2>
@@ -105,6 +117,9 @@
               But that doesn't mean the checker can't check. It can check a lot.</p>
             <small>Anders Hejlsberg, Build 2017 - "What's new in TypeScript?"</small>
           </blockquote>
+          <aside class="notes">
+            Which brought him to the point, that TypeScript has a big strength.
+          </aside>
         </section>
         <section>
           <h2>What if we had a mode that is sort of the opposite?</h2>
@@ -116,6 +131,10 @@
             </p>
             <small>Anders Hejlsberg, Build 2017 - "What's new in TypeScript?"</small>
           </blockquote>
+          <aside class="notes">
+            So talking about the strict checking of typescript they realized that using this type checking knowledge could be used also more
+            conservatively.
+          </aside>
         </section>
         <section>
           <h2>Conservative checking mode</h2>
@@ -126,6 +145,10 @@
 } else {
   print "Great!";
 }</code></pre>
+          <aside class="notes">
+            What does that mean "more conservatively"? Instead of assuming everything, that is not defined is possibly wrong, let's just
+            tell about things, that are for sure wrong.
+          </aside>
         </section>
 
         <section>
@@ -135,7 +158,12 @@
             <li>Type-checking errors can also be reported in .js</li>
             <li>skip checking some files by adding<br><code class="hljs-attribute">// @ts-nocheck</code></li>
             <li>ignore checking by adding<br><code class="hljs-attribute">// @ts-ignore</code></li>
+            <li><a href="https://github.com/Microsoft/TypeScript/wiki/JSDoc-support-in-JavaScript">JSDoc support</a> for variables to add a
+              type to them <br><code class="hljs-attribute">/** @type {string} */</code></li>
           </ul>
+          <aside class="notes">
+            So in TypeScript 2.3 the --checkJS option has been introduced.
+          </aside>
         </section>
 
         <section>
@@ -147,12 +175,51 @@
         </section>
 
         <section>
+          <section>
+            <h2>Rules</h2>
+            <p>Some things have been relaxed for <code>.js</code> files.</p>
+            <p>Some examples:</p>
+          </section>
+          <section>
+            <h2>Object literals are open-ended</h2>
+            <p>By default you can add members other than in <code>.ts</code> files, where you would get an error</p>
+            <pre><code class="hljs" style="word-wrap: break-word;">var obj = { a: 1 };
+obj.b = 2;  // Allowed</code></pre>
+            <pre><code class="hljs" style="word-wrap: break-word;">/** @type  */
+var obj = { a: 1 };
+obj.b = 2;  // Error, type {a: number} does not have property b</code></pre>
+          </section>
+          <section>
+            <h2>Function parameters are optional by default</h2>
+            <p>Because there is no optional parameters in <code>.js</code>, they made it like that:</p>
+            <pre><code class="hljs" style="word-wrap: break-word;">function bar(a, b){
+	console.log(a + " " + b);
+}
+
+bar(1);       // OK, second argument considered optional
+bar(1, 2);
+bar(1, 2, 3); // Error, too many arguments</code></pre>
+          </section>
+          <section>
+            <h2>Unspecified type parameters default to any</h2>
+            <p>An unspecified generic type argument in JSDoc defaults to any:</p>
+            <pre><code class="hljs" style="word-wrap: break-word;">/** @type{Array} */
+var x = [];
+
+x.push(1);        // OK
+x.push("string"); // OK, x is of type Array&lt;any&gt;
+</code></pre>
+          </section>
+        </section>
+
+        <section>
           <h2>Usage</h2>
           <ul>
             <li>add a new <code>tsconfig.json</code></li>
             <li>add <code>checkJs</code></li>
           </ul>
         </section>
+
 
         <section>
           <h2>tsconfig.json</h2>
@@ -174,20 +241,25 @@
         </section>
 
         <section>
-          <h2>Conclusion</h2>
-          <ul>
-            <li class="fragment">TSC assists the IDEs to have auto-completion</li>
-            <li class="fragment">You can add a lot of benefits even for ES6 by using <code class="hljs-attribute">"checkJs": true</code></li>
-            <li class="fragment">Write less code using Type Inference</li>
-          </ul>
+          <h2>Take home messages</h2>
+          <ol>
+            <li class="fragment">You can add a lot of benefits even for modern JS by using <code class="hljs-attribute">"checkJs":
+              true</code>
+            <li class="fragment">checkJS can be useful to find bugs in existing JS-projects</li>
+            <li class="fragment">In <code class="hljs-attribute">*.ts</code> the type checker knows even more: Write less code using Type
+              Inference
+            </li>
+          </ol>
         </section>
 
         <section>
           <h2>Sources</h2>
           <ul>
-            <li>Build 2017 - "What's new in TypeScript?", <a href="https://channel9.msdn.com/Events/Build/2017/B8088/player">Video</a></li>
-            <li>Type Inference: <a href="https://www.typescriptlang.org/docs/handbook/type-inference.html">TS-Docs</a></li>
-            <li>Demo project: <a href="https://github.com/csscomb/csscomb.js">csscomb.js on github</a></li>
+            <li>TypeScript Handbook <a href="https://www.typescriptlang.org/docs/handbook/type-checking-javascript-files.html">
+              "Type Checking JavaScript Files "</a></li>
+            <li>Build 2017 - <a href="https://channel9.msdn.com/Events/Build/2017/B8088/player">"What's new in TypeScript?"</a>, Video</li>
+            <li>TypeScript Handbook <a href="https://www.typescriptlang.org/docs/handbook/type-inference.html">Type Inference</a></li>
+            <li>Source code for Demo: <a href="https://github.com/csscomb/csscomb.js">csscomb.js on github</a></li>
           </ul>
         </section>
       </div>
